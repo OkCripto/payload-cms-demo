@@ -5,40 +5,19 @@ import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
-import {
-  AMENITIES,
-  LOCATIONS,
-  PRICE_MAX,
-  PRICE_MIN,
-  PROPERTY_TYPES,
-  STAY_TYPES,
-  type Amenity,
-  type PropertyType,
-  type StayType,
-} from "@/lib/data";
-
-export interface Filters {
-  price: [number, number];
-  stayTypes: StayType[];
-  amenities: Amenity[];
-  propertyTypes: PropertyType[];
-  locations: string[];
-}
-
-export const DEFAULT_FILTERS: Filters = {
-  price: [PRICE_MIN, PRICE_MAX],
-  stayTypes: [],
-  amenities: [],
-  propertyTypes: [],
-  locations: [],
-};
+import type { FilterOptions } from "@/lib/queries";
+import { defaultFilters, type Filters } from "@/lib/stays-ui";
 
 interface FiltersSidebarProps {
+  /** Option lists pulled live from the Neon lookup tables. */
+  options: FilterOptions;
+  /** Slider bounds derived from the DB (for the Reset button). */
+  priceBounds: [number, number];
   filters: Filters;
   onChange: (filters: Filters) => void;
 }
 
-export function FiltersSidebar({ filters, onChange }: FiltersSidebarProps) {
+export function FiltersSidebar({ options, priceBounds, filters, onChange }: FiltersSidebarProps) {
   const toggleValue = <T,>(list: T[], value: T): T[] =>
     list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 
@@ -49,7 +28,7 @@ export function FiltersSidebar({ filters, onChange }: FiltersSidebarProps) {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => onChange(DEFAULT_FILTERS)}
+          onClick={() => onChange(defaultFilters(priceBounds))}
           className="text-muted-foreground hover:text-foreground"
         >
           <RotateCcw />
@@ -61,8 +40,8 @@ export function FiltersSidebar({ filters, onChange }: FiltersSidebarProps) {
       <section className="flex flex-col gap-3">
         <h3 className="text-sm font-medium">Price range</h3>
         <Slider
-          min={PRICE_MIN}
-          max={PRICE_MAX}
+          min={priceBounds[0]}
+          max={priceBounds[1]}
           step={10}
           value={filters.price}
           onValueChange={(value) =>
@@ -81,11 +60,11 @@ export function FiltersSidebar({ filters, onChange }: FiltersSidebarProps) {
         </div>
       </section>
 
-      {/* Stay type */}
+      {/* Stay type chips — options live in the stay_types table */}
       <section className="flex flex-col gap-3">
         <h3 className="text-sm font-medium">Stay type</h3>
         <div className="flex flex-wrap gap-2">
-          {STAY_TYPES.map(({ value, label }) => {
+          {options.stayTypes.map(({ value, label }) => {
             const selected = filters.stayTypes.includes(value);
             return (
               <button
@@ -111,11 +90,11 @@ export function FiltersSidebar({ filters, onChange }: FiltersSidebarProps) {
         </div>
       </section>
 
-      {/* Amenities */}
+      {/* Amenities — options live in the amenities table */}
       <section className="flex flex-col gap-3">
         <h3 className="text-sm font-medium">Amenities</h3>
         <div className="flex flex-col gap-2.5">
-          {AMENITIES.map(({ value, label }) => (
+          {options.amenities.map(({ value, label }) => (
             <label
               key={value}
               className="flex cursor-pointer items-center gap-2.5 text-sm"
@@ -135,11 +114,11 @@ export function FiltersSidebar({ filters, onChange }: FiltersSidebarProps) {
         </div>
       </section>
 
-      {/* Property type */}
+      {/* Property type — options live in the property_types table */}
       <section className="flex flex-col gap-3">
         <h3 className="text-sm font-medium">Property type</h3>
         <div className="flex flex-col gap-2.5">
-          {PROPERTY_TYPES.map(({ value, label }) => (
+          {options.propertyTypes.map(({ value, label }) => (
             <label
               key={value}
               className="flex cursor-pointer items-center gap-2.5 text-sm"
@@ -159,11 +138,11 @@ export function FiltersSidebar({ filters, onChange }: FiltersSidebarProps) {
         </div>
       </section>
 
-      {/* Location */}
+      {/* Location — options live in the locations table */}
       <section className="flex flex-col gap-3">
         <h3 className="text-sm font-medium">Location</h3>
         <div className="flex flex-col gap-2.5">
-          {LOCATIONS.map(({ value, label }) => (
+          {options.locations.map(({ value, label }) => (
             <label
               key={value}
               className="flex cursor-pointer items-center gap-2.5 text-sm"
