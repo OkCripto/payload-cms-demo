@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import {
   AMENITIES,
+  LOCATIONS,
   PRICE_MAX,
   PRICE_MIN,
   PROPERTY_TYPES,
@@ -21,6 +22,7 @@ export interface Filters {
   stayTypes: StayType[];
   amenities: Amenity[];
   propertyTypes: PropertyType[];
+  locations: string[];
 }
 
 export const DEFAULT_FILTERS: Filters = {
@@ -28,6 +30,7 @@ export const DEFAULT_FILTERS: Filters = {
   stayTypes: [],
   amenities: [],
   propertyTypes: [],
+  locations: [],
 };
 
 interface FiltersSidebarProps {
@@ -147,6 +150,30 @@ export function FiltersSidebar({ filters, onChange }: FiltersSidebarProps) {
                   onChange({
                     ...filters,
                     propertyTypes: toggleValue(filters.propertyTypes, value),
+                  })
+                }
+              />
+              {label}
+            </label>
+          ))}
+        </div>
+      </section>
+
+      {/* Location */}
+      <section className="flex flex-col gap-3">
+        <h3 className="text-sm font-medium">Location</h3>
+        <div className="flex flex-col gap-2.5">
+          {LOCATIONS.map(({ value, label }) => (
+            <label
+              key={value}
+              className="flex cursor-pointer items-center gap-2.5 text-sm"
+            >
+              <Checkbox
+                checked={filters.locations.includes(value)}
+                onCheckedChange={() =>
+                  onChange({
+                    ...filters,
+                    locations: toggleValue(filters.locations, value),
                   })
                 }
               />

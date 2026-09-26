@@ -46,6 +46,14 @@ export default function Home() {
       ) {
         return false;
       }
+      if (
+        filters.locations.length > 0 &&
+        !filters.locations.some((loc) =>
+          p.state.toLowerCase().includes(loc.toLowerCase())
+        )
+      ) {
+        return false;
+      }
       return true;
     });
   }, [query, filters]);
@@ -98,9 +106,10 @@ export default function Home() {
               Filters
               {(filters.stayTypes.length +
                 filters.amenities.length +
-                filters.propertyTypes.length >
+                filters.propertyTypes.length +
+                filters.locations.length >
               0) &&
-                ` (${filters.stayTypes.length + filters.amenities.length + filters.propertyTypes.length})`}
+                ` (${filters.stayTypes.length + filters.amenities.length + filters.propertyTypes.length + filters.locations.length})`}
             </Button>
           </div>
 

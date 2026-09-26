@@ -134,3 +134,8 @@ export const PROPERTIES: Property[] = [
     propertyType: "3 BHK",
   },
 ];
+
+export const LOCATIONS: { value: string; label: string }[] = [
+  ...new Set(PROPERTIES.map((p) => p.state)),
+].map((state) => ({ value: state, label: state }));
+
